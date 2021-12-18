@@ -1,5 +1,5 @@
 'use strict';
-
+const redoc = require('redoc-express');
 const express = require('express');
 const app = express();
 
@@ -8,6 +8,53 @@ const jsonParser = bodyParser.json();
 
 module.exports = (db) => {
     app.get('/health', (req, res) => res.send('Healthy'));
+
+    app.get('/swagger.yaml', (req, res) => {
+        try {
+           res.sendFile('swagger.yaml', { root: '.' });
+        } catch (error) {
+           Sentry.captureException(error);
+           res.status(500).json({
+              statusCode: 500,
+              statusMessage: 'InternalServiceError',
+              message: 'Something went wrong',
+           });
+        }
+    });
+
+    app.get('/ride.yaml', (req, res) => {
+        try {
+           res.sendFile('ride.yaml', { root: './docs' });
+        } catch (error) {
+           Sentry.captureException(error);
+           res.status(500).json({
+              statusCode: 500,
+              statusMessage: 'InternalServiceError',
+              message: 'Something went wrong',
+           });
+        }
+    });
+
+    app.get('/utils.yaml', (req, res) => {
+        try {
+           res.sendFile('utils.yaml', { root: './docs' });
+        } catch (error) {
+           Sentry.captureException(error);
+           res.status(500).json({
+              statusCode: 500,
+              statusMessage: 'InternalServiceError',
+              message: 'Something went wrong',
+           });
+        }
+    });
+
+    app.get(
+        '/api-docs',
+        redoc({
+           title: 'API Docs',
+           specUrl: '/swagger.yaml',
+        }),
+    );
 
     app.post('/rides', jsonParser, (req, res) => {
         const startLatitude = Number(req.body.start_lat);
