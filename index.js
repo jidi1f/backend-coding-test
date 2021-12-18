@@ -17,5 +17,5 @@ db.serialize(() => {
 
     const app = require('./src/app')(db);
 
-    app.listen(port, () => console.log(`App started and listening on port ${port}`));
+    app.listen(port, () => console.log(`App started and listening on port ${port}, see doc - /api-docs`));
 });
