@@ -1,0 +1,38 @@
+openapi: 3.0.0
+info:
+  title: Backend-coding-test-master
+  description: Redocly.
+  version: 1.0.0
+
+paths: 
+  # Ride
+  /ride:
+    $ref: ./ride.yaml#/paths/~1rides
+  /rides/{id}:
+    $ref: ./ride.yaml#/paths/~1rides~1{id}
+  # Utility
+  /health:
+    $ref: ./utils.yaml#/paths/~1health
+
+tags:
+- name: ride_model
+  x-displayName: RideModels
+  description: |
+    ## Ride
+    <SchemaDefinition schemaRef="#/components/schemas/Ride" />
+x-tagGroups:
+  - name: API
+    tags:
+      - Ride
+  - name: Models
+    tags:
+      - ride_model
+  - name: Utiliy
+    tags:
+      - Health
+
+components:
+  schemas:
+    # Ride
+    Ride:
+      $ref: ./ride.yaml#/components/schemas/Ride
