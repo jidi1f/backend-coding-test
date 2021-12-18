@@ -8,10 +8,16 @@
   },
   "scripts": {
     "test": "mocha tests",
+    "coverage": "nyc --check-coverage=true --lines=80 npm run test",
     "start": "tsc && node dist/index.js",
     "eslint": "eslint . --ext .js",
     "dev": "nodemon node index.js"
   },
+  "prepush": [
+    "test",
+    "eslint",
+    "coverage"
+  ],
   "keywords": [
     "Xendit"
   ],
@@ -37,6 +43,7 @@
     "git-pre-push": "0.0.5",
     "mocha": "^6.1.4",
     "nodemon": "^2.0.15",
+    "nyc": "^15.1.0",
     "prettier": "^2.5.1",
     "supertest": "^4.0.2",
     "typescript": "^4.5.4"
