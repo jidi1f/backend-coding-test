@@ -1,0 +1,10 @@
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Check if server is running.
+      description: Check if server is running.
+      responses: 
+        '200':
+          description: Healthy

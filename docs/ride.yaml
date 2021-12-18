@@ -1,0 +1,155 @@
+components: 
+  schemas:
+    Ride:
+      properties:
+        riderId:
+          type: integer
+          readOnly: true
+          example: 1
+        startLatitude:
+          type: integer
+          example: 66
+          description: range from -90 to 90
+        startLongitude:
+          type: integer
+          example: 170
+          description: range from -180 to 180
+        endLatitude:
+          type: integer
+          example: -80
+          description: range from -90 to 90
+        endLongitude:
+          type: integer
+          example: -65
+          description: range from -180 to 180
+        riderName:
+          type: string
+          example: John
+        driverName:
+          type: string
+          example: Danil
+        driverVehicle:
+          type: string
+          example: M2
+        created:
+          readOnly: true
+          type: string
+          format: date
+          example: '2021-12-16 16:54:32'
+      required:
+        - riderName
+        - driverName
+        - driverVehicle
+        - endLongitude
+        - startLatitude
+        - startLongitude
+        - endLatitude
+
+paths:
+  /rides:
+    post:
+      tags:
+        - Ride
+      summary: Saves and returns new drive.
+      description: Saves and returns new drive.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ride'
+      responses: 
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ride' 
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Start latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively'
+                  error_code:
+                    type: string
+                    example: 'VALIDATION_ERROR'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Unknown error'
+                  error_code:
+                    type: string
+                    example: 'SERVER_ERROR'
+
+    get:
+      tags:
+        - Ride
+      summary: Returns all rides 
+      description: Returns all comments
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ride' 
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Unknown error'
+                  error_code:
+                    type: string
+                    example: 'SERVER_ERROR'
+  
+  /rides/{id}:
+    get:
+      tags:
+        - Ride
+      summary: Returns ride by id
+      description: Returns ride by id
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ride' 
+        '404':
+          description: Item was not found
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Unknown error'
+                  error_code:
+                    type: string
+                    example: 'SERVER_ERROR'
