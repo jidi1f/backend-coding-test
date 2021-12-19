@@ -148,9 +148,37 @@ describe('API tests', () => {
                             'application/json; charset=utf-8',
                         )
                         .expect((res) => {
-                            assert.include(res.body[0], {
+                            assert.include(res.body.pagedRows[0], {
                                 ...successRideDataResponse,
                             });
+                            assert.equal(res.body.pagesTotal, 1);
+                            assert.equal(res.body.currentPage, 1);
+                        })
+                        .expect(200, done);
+                });
+        });
+        it('Should return page of rides', (done) => {
+            supertest(app)
+                .post('/rides')
+                .send({ ...successRideData })
+                .expect('Content-Type', 'application/json; charset=utf-8')
+                .expect((res) => {
+                    assert.include(res.body, { ...successRideDataResponse });
+                })
+                .expect(200)
+                .end(() => {
+                    supertest(app)
+                        .get('/rides/?offset=1&limit=4')
+                        .expect(
+                            'Content-Type',
+                            'application/json; charset=utf-8',
+                        )
+                        .expect((res) => {
+                            assert.include(res.body.pagedRows[0], {
+                                ...successRideDataResponse,
+                            });
+                            assert.equal(res.body.pagesTotal, 1);
+                            assert.equal(res.body.currentPage, 1);
                         })
                         .expect(200, done);
                 });
