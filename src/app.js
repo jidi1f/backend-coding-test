@@ -164,7 +164,14 @@ module.exports = (db) => {
     });
 
     app.get('/rides', (req, res) => {
-        db.all('SELECT * FROM Rides', (err, rows) => {
+        let { offset, limit } = req.query;
+
+        const getPagedResponse = (err, total, pagedRows) => {
+            if (limit === undefined && offset === undefined) {
+                offset = 1;
+                limit = total;
+            }
+
             if (err) {
                 logger.error({ message: err.message, code: err.code });
                 return res.send({
@@ -173,19 +180,49 @@ module.exports = (db) => {
                 });
             }
 
-            if (rows.length === 0) {
-                logger.error({
-                    message: 'Could not find any rides',
-                    code: 'NOT_FOUND_ERROR',
-                });
-                return res.send({
-                    error_code: 'NOT_FOUND_ERROR',
-                    message: 'Could not find any rides',
-                });
-            }
+            const pagesTotal = Math.ceil(total / limit);
 
-            return res.json(rows);
-        });
+            return res.json({
+                pagesTotal,
+                pagedRows,
+                currentPage: offset,
+            });
+        };
+
+        db.all(
+            'SELECT * FROM Rides limit ? offset ?',
+            [
+                limit ? Number(limit) : -1,
+                offset && limit ? (Number(offset) - 1) * Number(limit) : 0,
+            ],
+            (err, rows) => {
+                if (err) {
+                    logger.error({ message: err.message, code: err.code });
+                    return res.send({
+                        error_code: 'SERVER_ERROR',
+                        message: 'Unknown error',
+                    });
+                }
+                if (rows.length === 0) {
+                    logger.error({
+                        message: 'Could not find any rides',
+                        code: 'NOT_FOUND_ERROR',
+                    });
+                    return res.send({
+                        error_code: 'NOT_FOUND_ERROR',
+                        message: 'Could not find any rides',
+                    });
+                }
+
+                return db.get(
+                    'SELECT COUNT(*) as total FROM Rides',
+                    [],
+                    (error, result) => {
+                        getPagedResponse(error, result.total, rows);
+                    },
+                );
+            },
+        );
     });
 
     app.get('/rides/:id', (req, res) =>
