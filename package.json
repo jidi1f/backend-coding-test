@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "mocha --delay --exit tests",
-    "test:load": "npm-run-all --parallel start && load",
+    "test:load": "npm-run-all --parallel start load",
     "load": "artillery quick -r 100 -d 30 http://localhost:8010/health",
     "coverage": "nyc --check-coverage=true --lines=80 npm run test",
     "start": "node index.js",
