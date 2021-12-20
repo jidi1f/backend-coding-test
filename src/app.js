@@ -1,4 +1,5 @@
 const express = require('express');
+const helmet = require('helmet');
 const logger = require('./util/logger');
 const openDb = require('./util/db');
 const buildSchemas = require('./models');
@@ -10,6 +11,7 @@ const app = express();
 const port = 8010;
 
 app.use(express.json());
+app.use(helmet());
 
 const startApp = async () => {
     const db = await openDb();
