@@ -2,7 +2,7 @@ components:
   schemas:
     Ride:
       properties:
-        riderId:
+        rideID:
           type: integer
           readOnly: true
           example: 1
@@ -64,19 +64,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Ride' 
-        '400':
+        '422':
           description: Validation error
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
+                  statusCode:
                     type: string
-                    example: 'Start latitude and longitude must be between -90 - 90 and -180 to 180 degrees respectively'
-                  error_code:
-                    type: string
-                    example: 'VALIDATION_ERROR'
+                    example: 'Ride Validation Error'
+                  details:
+                    type: object
+                    example: {}
         '500':
           description: Server error
           content:
@@ -86,10 +86,13 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: 'Unknown error'
-                  error_code:
+                    example: 'Something went wrong'
+                  statusCode:
+                    type: number
+                    example: 500
+                  statusMessage:
                     type: string
-                    example: 'SERVER_ERROR'
+                    example: 'InternalServiceError'
 
     get:
       tags:
@@ -115,7 +118,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  pagedRows:
+                  rides:
                     type: array
                     items:
                       - allOf:
@@ -135,10 +138,13 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: 'Unknown error'
-                  error_code:
+                    example: 'Something went wrong'
+                  statusCode:
+                    type: number
+                    example: 500
+                  statusMessage:
                     type: string
-                    example: 'SERVER_ERROR'
+                    example: 'InternalServiceError'
   
   /rides/{id}:
     get:
@@ -161,6 +167,20 @@ paths:
                 $ref: '#/components/schemas/Ride' 
         '404':
           description: Item was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'No such ride found'
+                  statusCode:
+                    type: number
+                    example: 404
+                  statusMessage:
+                    type: string
+                    example: '404 Not found'
         '500':
           description: Server error
           content:
@@ -170,7 +190,10 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: 'Unknown error'
-                  error_code:
+                    example: 'Something went wrong'
+                  statusCode:
+                    type: number
+                    example: 500
+                  statusMessage:
                     type: string
-                    example: 'SERVER_ERROR'
+                    example: 'InternalServiceError'
