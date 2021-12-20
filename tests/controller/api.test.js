@@ -176,6 +176,34 @@ module.exports = function (server, db) {
                             .expect(404, done);
                     });
             });
+            it('should be not vulnerable to sql injection', (done) => {
+                supertest(server)
+                    .post('/rides')
+                    .send({ ...rideData.successRideData })
+                    .expect('Content-Type', 'application/json; charset=utf-8')
+                    .expect((res) => {
+                        assert.include(
+                            res.body,
+                            rideData.successRideDataResponse,
+                        );
+                    })
+                    .expect(200)
+                    .end(() => {
+                        supertest(server)
+                            .get('/rides/1; DROP TABLE  Rides; --')
+                            .expect(
+                                'Content-Type',
+                                'application/json; charset=utf-8',
+                            )
+                            .expect((res) => {
+                                assert.include(
+                                    res.body,
+                                    rideData.notFoundResponse,
+                                );
+                            })
+                            .expect(404, done);
+                    });
+            });
         });
     });
 };

@@ -39,7 +39,8 @@ const RideModel = (db) => {
         },
         async findById(id) {
             const ride = await database.get(
-                `SELECT * FROM Rides WHERE rideID='${id}'`,
+                'SELECT * FROM Rides WHERE rideID=?',
+                [id],
             );
 
             return ride;
