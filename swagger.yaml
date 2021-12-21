@@ -6,7 +6,7 @@ info:
 
 paths: 
   # Ride
-  /ride:
+  /rides:
     $ref: ./ride.yaml#/paths/~1rides
   /rides/{id}:
     $ref: ./ride.yaml#/paths/~1rides~1{id}
